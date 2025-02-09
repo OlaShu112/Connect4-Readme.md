@@ -252,15 +252,16 @@ class MLAgent:
 
 def play_game(agent1, agent2):
     """Runs a game between two players (human or AI)."""
+    pygame.init()  # Initialize pygame before the game loop
     game_board = GameBoard()
     current_player = PLAYER1
     play_background_music()  # Start music before the game loop
 
     running = True
     while running:
-        # Check if music has stopped, then play another track
-        if not pygame.mixer.music.get_busy():
-            play_background_music()
+        for event in pygame.event.get():
+            if event.type == pygame.USEREVENT:
+                play_background_music()  # Play new music track when the current one ends
 
         if current_player == PLAYER1:
             print("Player1's turn (Human) - ●")
@@ -298,7 +299,7 @@ def play_game(agent1, agent2):
     else:
         print("Thanks for playing!")
 
-# Assuming the rest of the game logic, including GameBoard, PLAYER1, PLAYER2, and agent classes are implemented properly.
+    pygame.quit()  # Clean up and quit pygame when the game ends
 
 # ================================ 
 # Main Execution 
