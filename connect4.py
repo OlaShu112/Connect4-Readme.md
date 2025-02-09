@@ -249,6 +249,7 @@ class MLAgent:
 # ================================
 
 
+
 def play_game(agent1, agent2):
     """Runs a game between two players (human or AI)."""
     game_board = GameBoard()
@@ -289,6 +290,15 @@ def play_game(agent1, agent2):
         current_player = PLAYER1 if current_player == PLAYER2 else PLAYER2
 
         time.sleep(0.1)  # Small delay to avoid high CPU usage
+
+    # After the game ends, ask the user if they want to play again
+    play_again = input("Do you want to play again? (Y/N): ").lower()
+    if play_again == 'y':
+        play_game(agent1, agent2)  # Restart the game if 'Y' is selected
+    else:
+        print("Thanks for playing!")
+
+# Assuming the rest of the game logic, including GameBoard, PLAYER1, PLAYER2, and agent classes are implemented properly.
 
 # ================================ 
 # Main Execution 
