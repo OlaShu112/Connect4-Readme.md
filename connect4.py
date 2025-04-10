@@ -95,7 +95,7 @@ def play_game(agent1, agent2):
 # ================================
 if __name__ == "__main__":
     # Define paths for the dataset files
-    data_path = "C:/Users/Admin/OneDrive/Desktop/Connect4AIProject/src/connect4_dataset/connect-4.data.csv"
+    data_path = "C:/Users/Admin/OneDrive/Desktop/Connect4AIProject/src/connect4_dataset/connect-4.data"
     #names_path = "C:/Users/Admin/OneDrive/Desktop/Connect4AIProject/src/connect4_dataset/connect-4.names"
 
 

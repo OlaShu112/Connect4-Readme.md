@@ -3,7 +3,7 @@ import sys
 
 
 
-from music_player import play_music, stop_music, next_track, previous_track
+from music_player import play_music, stop_music, next_track, previous_track # type: ignore
 from agents import minimax_agent, random_agent, smart_agent, ml_agent, make_move, check_win, valid_move
 from agents import block_player_move
 
