@@ -1,6 +1,9 @@
 import random
 import pandas as pd
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module='sklearn')
+
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
@@ -158,8 +161,7 @@ def block_player_move(board, player):
 # ================================
 # Smart AI Agent (Rule-Based)
 # ================================
-import random
-from agents import valid_move, make_move, check_win, random_agent, block_player_move
+
 
 def smart_agent(board, player):
     """
@@ -332,6 +334,18 @@ def convert_board_positions_to_numeric(df):
 
 # Convert the board positions in X into numeric values
 X = convert_board_positions_to_numeric(X)
+
+# Ensure that all columns in X are numeric after conversion
+for column in X.columns:
+    # If a column is still not numeric, attempt to convert it
+    if X[column].dtype == 'object':
+        X[column] = pd.to_numeric(X[column], errors='coerce')
+
+# Drop any rows with NaN values that couldn't be converted
+X = X.dropna()
+
+# Ensure that all columns in X are now numeric
+assert all(np.issubdtype(X[col], np.number) for col in X.columns), "Not all columns are numeric."
 
 # Train-test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)

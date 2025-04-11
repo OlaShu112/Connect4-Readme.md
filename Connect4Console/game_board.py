@@ -1,6 +1,6 @@
 import pygame
 import random
-from music import MusicPlayer
+from Connect4Console.music import MusicPlayer
 
 # ================================
 # Game Board Class

@@ -9,7 +9,7 @@ warnings.simplefilter(action='ignore', category=pd.errors.DtypeWarning)
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from game_logic import PLAYER1, PLAYER2
+from Connect4Console.game_logic import PLAYER1, PLAYER2
 
 
 

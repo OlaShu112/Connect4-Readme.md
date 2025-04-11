@@ -1,11 +1,13 @@
 import pygame
-from game_board import GameBoard
-from agents import RandomAgent, SmartAgent, MiniMaxAgent
+from Connect4Console.game_board import GameBoard
+from Connect4Console.agents import RandomAgent, SmartAgent, MiniMaxAgent
 import time
-from agents import MLAgent
+from Connect4Console.agents import MLAgent
 import os
-from music import MusicPlayer
-from game_logic import PLAYER1, PLAYER2
+from Connect4Console.music import MusicPlayer
+from Connect4Console.game_logic import PLAYER1, PLAYER2
+import random
+from Connect4Console.agents import valid_move, make_move, check_win, random_agent, block_player_move
 
 
 
