@@ -1,11 +1,10 @@
 import pygame
 import sys
 import numpy as np
-import random
 
 
 from connect4.music_player import play_music, stop_music, next_track, previous_track  
-from connect4.agents import  make_move, check_win, valid_move
+from connect4.agents import minimax_agent, random_agent, smart_agent, ml_agent, make_move, check_win, valid_move
 from connect4.agents import block_player_move
 
 # Initialize Pygame
@@ -32,46 +31,6 @@ pygame.display.set_caption("Connect 4")
 
 # Font for text
 font = pygame.font.SysFont("Arial", 40)
-
-def get_valid_moves(board):
-    valid_moves = []
-    for col in range(len(board[0])):
-        if board[0][col] == 0:
-            valid_moves.append(col)
-    return valid_moves
-
-def minimax_agent(board):
-    valid_moves = get_valid_moves(board)
-    if not valid_moves:
-        print("No valid moves left!")
-        return None
-    best_move = valid_moves[0]
-    return best_move
-
-def random_agent(board):
-    valid_moves = get_valid_moves(board)
-    if not valid_moves:
-        print("No valid moves left!")
-        return None
-    return random.choice(valid_moves)
-
-def smart_agent(board):
-    valid_moves = get_valid_moves(board)
-    if not valid_moves:
-        print("No valid moves left!")
-        return None
-    center = len(board[0]) // 2
-    if center in valid_moves:
-        return center
-    return random.choice(valid_moves)
-
-def ml_agent(board):
-    valid_moves = get_valid_moves(board)
-    if not valid_moves:
-        print("No valid moves left!")
-        return None
-    return random.choice(valid_moves)
-# --- End of AI Agent Functions ---
 
 def create_board():
     return [[0] * COLUMN_COUNT for _ in range(ROW_COUNT)]
@@ -191,7 +150,6 @@ def ask_play_again():
                     return True  # Continue playing
                 if event.key == pygame.K_n:
                     return False  # Go back to the main menu
-                
 
 def game_loop(game_mode, player1_agent, player2_agent):
     while True:
@@ -229,13 +187,11 @@ def game_loop(game_mode, player1_agent, player2_agent):
                             draw_board(board, turn)
 
                 # AI Logic for AI vs AI
-                elif game_mode == 'ai_vs_ai':
-                    # Player 1's (AI) turn
-                    if turn == 1:
-                         col = player1_agent(board, 1)  # Get column from Player 1 AI agent
+                elif game_mode == 'ai_vs_ai' and turn == 1:
+                    col = player1_agent(board, 1)
 
                     try:
-                            col = int(float(col))
+                        col = int(float(col))
                     except (ValueError, TypeError):
                         print(f"Invalid column received from AI Player 1: {col}")
                         col = -1
@@ -243,39 +199,42 @@ def game_loop(game_mode, player1_agent, player2_agent):
                     if col == -1:
                         print("Player 1 (Minimax Agent) couldn't find a valid move. Skipping turn.")
                         turn = 2
-                    else:
+                    pygame.time.wait(1000)
+                    if col != -1:  # Fixed the indentation here
                         row = drop_piece(board, col, turn)
                         if row != -1:
                             if check_win(board, turn):
                                 draw_board(board, turn)
                                 display_message(f"Player {turn} (Minimax Agent) wins!")
                                 running = False
-                            turn = 2  # Switch to Player 2's turn
+                            turn = 2
+                            draw_board(board, turn)
+                        pygame.time.wait(1000)
+
+                # Player vs AI Logic
+                elif game_mode == 'player_vs_ai' and turn == 1:
+                    # Human's turn
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        col = event.pos[0] // SQUARE_SIZE
+                        if valid_move(board, col):
+                            row = drop_piece(board, col, turn)
+                            if row != -1 and check_win(board, turn):  # Ensure valid drop
+                                draw_board(board, turn)
+                                display_message(f"Player {turn} wins!")
+                                running = False
+                            turn = 2  # AI's turn
                             draw_board(board, turn)
                             pygame.time.wait(1000)
 
-        # Player 2's (AI) turn
-                elif turn == 2:
-                    col = player2_agent(board, 2)  # Get column from Player 2 AI agent
-
-                try:
-                    col = int(float(col))
-                except (ValueError, TypeError):
-                    print(f"Invalid column received from AI Player 2: {col}")
-                    col = -1
-
-                if col == -1:
-                    print("Player 2 (Random Agent) couldn't find a valid move. Skipping turn.")
-                    turn = 1  # Skip turn for Player 2
-                else:
+                elif game_mode == 'player_vs_ai' and turn == 2:
+                    col = player2_agent(board, 2)
                     row = drop_piece(board, col, turn)
-                    if row != -1:
-                        if check_win(board, turn):
-                            draw_board(board, turn)
-                            display_message(f"Player {turn} (Random Agent) wins!")
-                            running = False
-                        turn = 1  # Switch to Player 1's turn
+                    if row != -1 and check_win(board, turn):  # Ensure valid drop
                         draw_board(board, turn)
+                        display_message(f"Player {turn} wins!")
+                        running = False
+                    turn = 1
+                    draw_board(board, turn)
                     pygame.time.wait(1000)
 
             if not running:  # If game ends, ask for replay
