@@ -35,12 +35,10 @@ def board_is_full(board):
     return all(board[0][c] != 0 for c in range(len(board[0])))
 
 def ai_move(board, agent, turn, label):
-    # First attempt to block the opponent's winning move
     opponent = 1 if turn == 2 else 2
     block_col = block_player_move(board, opponent)
 
     if block_col != -1:
-        # Block the opponent's winning move
         row = drop_piece(board, block_col, turn)
         if row != -1:
             if check_win(board, turn):
@@ -54,7 +52,6 @@ def ai_move(board, agent, turn, label):
             draw_board(board, switch_turn(turn))
         return False
 
-    # If no blocking move is needed, proceed with the AI's usual move
     col = agent(board, turn)
     try:
         col = int(float(col))
@@ -80,37 +77,30 @@ def ai_move(board, agent, turn, label):
     return False
 
 def draw_board(board, current_turn):
-    """Draws the Connect 4 game board with the current state."""
     screen.fill(BLACK)
     pygame.draw.rect(screen, BLUE, (0, 0, WIDTH, SQUARE_SIZE))
 
     for row in range(ROW_COUNT):
         for col in range(COLUMN_COUNT):
             pygame.draw.circle(screen, BLUE, (col * SQUARE_SIZE + SQUARE_SIZE // 2, (row + 1) * SQUARE_SIZE + SQUARE_SIZE // 2), SQUARE_SIZE // 2 - 5)
-
-            # Draw player pieces
             if board[row][col] == 1:
                 pygame.draw.circle(screen, RED, (col * SQUARE_SIZE + SQUARE_SIZE // 2, (row + 1) * SQUARE_SIZE + SQUARE_SIZE // 2), SQUARE_SIZE // 2 - 5)
             elif board[row][col] == 2:
                 pygame.draw.circle(screen, YELLOW, (col * SQUARE_SIZE + SQUARE_SIZE // 2, (row + 1) * SQUARE_SIZE + SQUARE_SIZE // 2), SQUARE_SIZE // 2 - 5)
 
-    # Draw the hovering ball with color based on the current turn
     hover_color = YELLOW if current_turn == 1 else RED
     pygame.draw.circle(screen, hover_color, (pygame.mouse.get_pos()[0] // SQUARE_SIZE * SQUARE_SIZE + SQUARE_SIZE // 2, SQUARE_SIZE // 2), SQUARE_SIZE // 2 - 5)
-
     pygame.display.flip()
 
 def game_logic(game_mode):
-    """Starts the game logic depending on the selected mode."""
     if game_mode == 'human':
-        # Human vs Human Game Logic
         running = True
-        turn = 1  # Player 1 starts
+        turn = 1
         board = create_board()
 
         while running:
             screen.fill(BLACK)
-            draw_board(board, turn)  # Draw the current board state
+            draw_board(board, turn)
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -122,7 +112,7 @@ def game_logic(game_mode):
                     col = get_column_from_mouse(event)
                     if valid_move(board, col):
                         row = drop_piece(board, col, turn)
-                        if row != -1:  # Ensure the move was successful
+                        if row != -1:
                             if check_win(board, turn):
                                 draw_board(board, turn)
                                 display_message(f"Player {turn} wins!")
@@ -139,8 +129,8 @@ def game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play
     while True:
         board = create_board()
         running = True
-        turn = 1  # Player 1 starts
-        draw_board(board, turn)  # Draw the board with Player 1's color
+        turn = 1
+        draw_board(board, turn)
 
         while running:
             for event in pygame.event.get():
@@ -158,12 +148,11 @@ def game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play
                     elif event.key == pygame.K_LEFT:
                         previous_track()
 
-                # Human vs Human Logic
                 if game_mode == 'human' and event.type == pygame.MOUSEBUTTONDOWN:
                     col = get_column_from_mouse(event)
                     if valid_move(board, col):
                         row = drop_piece(board, col, turn)
-                        if row != -1:  # Ensure the move is valid
+                        if row != -1:
                             if check_win(board, turn):
                                 draw_board(board, turn)
                                 display_message(f"Player {turn} wins!")
@@ -175,7 +164,6 @@ def game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play
                             turn = switch_turn(turn)
                             draw_board(board, turn)
 
-                # Player vs AI: Human turn
                 elif game_mode == 'player_vs_ai' and turn == 1:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         col = get_column_from_mouse(event)
@@ -192,28 +180,37 @@ def game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play
                                     running = False
                                 turn = 2
                                 draw_board(board, turn)
-                                pygame.time.delay(1000)  # Delay before AI move
+                                pygame.time.delay(1000)
 
-                # Player vs AI: AI turn
                 elif game_mode == 'player_vs_ai' and turn == 2:
-                    pygame.time.delay(1000)  # Non-blocking delay for AI turn
+                    pygame.time.delay(1000)
                     if ai_move(board, player2_agent, turn, "AI Player"):
                         running = False
                     else:
                         turn = 1
 
+            # AI vs AI Logic
+            if game_mode == 'ai_vs_ai' and running:
+                pygame.time.delay(500)
+                agent = player1_agent if turn == 1 else player2_agent
+                label = "AI 1" if turn == 1 else "AI 2"
+                if ai_move(board, agent, turn, label):
+                    running = False
+                else:
+                    turn = switch_turn(turn)
+
             if not running:
                 if ask_play_again():
-                    break  # Restart game
+                    break
                 else:
-                    game_mode = main_menu()  # Go back to the main menu
-                    player1_agent = difficulty_menu()  # Choose player 1 agent
-                    player2_agent = random_agent if game_mode == 'ai_vs_ai' else minimax_agent  # Choose player 2 agent
-                    break  # Return to main loop
+                    game_mode = main_menu()
+                    player1_agent = difficulty_menu()
+                    player2_agent = random_agent if game_mode == 'ai_vs_ai' else minimax_agent
+                    break
 
 # Run the game loop
 if __name__ == "__main__":
-    game_mode = main_menu()  # Main menu
-    player1_agent = difficulty_menu()  # Select agent for player 1
-    player2_agent = random_agent if game_mode == 'ai_vs_ai' else minimax_agent  # Select agent for player 2
+    game_mode = main_menu()
+    player1_agent = difficulty_menu()
+    player2_agent = random_agent if game_mode == 'ai_vs_ai' else minimax_agent
     game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play_again, main_menu, difficulty_menu)
