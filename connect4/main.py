@@ -1,10 +1,19 @@
 import pygame
 import sys
+
 from connect4.music_player import play_music, stop_music, next_track, previous_track  
-from connect4.agents import minimax_agent, random_agent, smart_agent, ml_agent
+from connect4.agents.smart_agent import smart_agent
+from connect4.agents.random_agent import random_agent
+from connect4.agents.minimax_agent import minimax_agent
+from connect4.agents.ml_agent import ml_agent
 from connect4.game_logic import game_loop, draw_board
-from connect4.utils import create_board, drop_piece, valid_move, check_win, block_player_move
-from connect4.message import display_message, ask_play_again  # Import from message.py
+from connect4.game_utils import COLUMN_COUNT, ROW_COUNT, valid_move, drop_piece, check_win, block_player_move
+
+from connect4.message import display_message, ask_play_again
+
+
+
+
 
 # Initialize Pygame
 pygame.init()

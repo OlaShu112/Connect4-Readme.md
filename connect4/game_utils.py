@@ -1,4 +1,4 @@
-# utils.py
+# game_utils.py
 
 COLUMN_COUNT = 7
 ROW_COUNT = 6
@@ -23,6 +23,13 @@ def valid_move(board, col):
     """Checks if the move is valid in the given column."""
     col = int(float(col))
     return 0 <= col < COLUMN_COUNT and board[0][col] == 0
+
+def make_move(board, col, player):
+    for row in range(ROW_COUNT - 1, -1, -1):
+        if board[row][col] == 0:
+            board[row][col] = player
+            return row
+    return None
 
 def check_win(board, piece):
     """Checks for a win condition for the specified player (piece)."""

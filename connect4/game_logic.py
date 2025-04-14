@@ -1,9 +1,11 @@
 import pygame
 import sys
-from connect4.utils import create_board, drop_piece, valid_move, check_win, block_player_move
+from connect4.game_utils import create_board, drop_piece, valid_move, check_win, block_player_move
 from connect4.music_player import play_music, stop_music, next_track, previous_track
 from connect4.message import display_message, ask_play_again, main_menu, difficulty_menu
-from connect4.agents import minimax_agent, random_agent
+from connect4.agents.random_agent import random_agent
+from connect4.agents.minimax_agent import minimax_agent
+
 
 # Initialize pygame
 pygame.init()
