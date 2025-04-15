@@ -171,3 +171,10 @@ if __name__ == "__main__":
     # Launch the game loop
     game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play_again, main_menu, difficulty_menu, screen, player1_name, player2_name)
     display_scoreboard()
+
+
+## References
+# [1] https://www.pygame.org/docs/
+# https://scikit-learn.org/stable/
+# https://www.youtube.com/watch?v=UYgyRArKDEs&list=PLFCB5Dp81iNV_inzM-R9AKkZZlePCZdtV
+# https://www.askpython.com/python/examples/connect-four-game

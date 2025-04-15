@@ -1,8 +1,8 @@
 {
     "Player 1": {
-        "wins": 1
+        "wins": 5
     },
     "AI": {
-        "wins": 4
+        "wins": 10
     }
 }

@@ -117,3 +117,15 @@ def ml_agent(board, player):
         return random.choice(valid_columns)
     else:
         return None  # Board full or error — no valid moves
+
+
+# ============================
+# CRITICAL LIMITATION (for evaluation)
+# ============================
+# The model predicts the *game outcome* (winner label: 'win', 'loss', 'draw') 
+# based on the current board state — NOT the optimal move (i.e., column number 0–6).
+# Therefore, the ML agent cannot choose strategic moves directly from the model.
+# It instead selects randomly from valid columns when prediction is unsuitable.
+# 
+# This limits the agent's gameplay ability — it cannot "learn" to play.
+# A future enhancement would involve training the model to predict optimal moves directly.
