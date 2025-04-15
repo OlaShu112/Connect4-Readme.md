@@ -1,45 +1,83 @@
 import pygame
 import sys
-
 from connect4.music_player import play_music, stop_music, next_track, previous_track  
 from connect4.agents.smart_agent import smart_agent
 from connect4.agents.random_agent import random_agent
 from connect4.agents.minimax_agent import minimax_agent
 from connect4.agents.ml_agent import ml_agent
-from connect4.game_logic import game_loop, draw_board
+from connect4.game_logic import game_loop
+from connect4.graphics import draw_board
 from connect4.game_utils import COLUMN_COUNT, ROW_COUNT, valid_move, drop_piece, check_win, block_player_move
-
+from connect4.constants import screen, WIDTH, HEIGHT, YELLOW, RED, BLACK, WHITE
 from connect4.message import display_message, ask_play_again
-
-
-
-
+from connect4.player_data import save_player_score, display_scoreboard
 
 # Initialize Pygame
 pygame.init()
 
-# Constants for game
-SQUARE_SIZE = 100  
-COLUMN_COUNT = 7  
-ROW_COUNT = 6  
-WIDTH = COLUMN_COUNT * SQUARE_SIZE  
-HEIGHT = (ROW_COUNT + 1) * SQUARE_SIZE  
-
-# Colours
-WHITE = (255, 255, 255)
-BLUE = (173, 216, 230)
-YELLOW = (255, 255, 0)
-RED = (255, 0, 0)
-BLACK = (0, 0, 0)
-
 # Set up display
-size = (WIDTH, HEIGHT)
-screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Connect 4")
 
 # Font for text
 font = pygame.font.SysFont("Arial", 40)
 
+# Initial game state setup (assuming board and turn are initialized elsewhere)
+board = [[0 for _ in range(7)] for _ in range(6)]  # Example empty board
+turn = 1  # Example turn (1 or 2, depending on the player)
+
+# Register Player Function
+def register_player():
+    """Prompts the player to register their name."""
+    while True:
+        screen.fill(BLACK)
+        text = font.render("Do you want to register your name? (Y/N)", True, WHITE)
+        screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3))
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_y:
+                    # Register player
+                    return input_player_name()
+                elif event.key == pygame.K_n:
+                    # No registration, proceed to the game
+                    return None
+
+def input_player_name():
+    """Prompts the player to input their name."""
+    name = ""
+    input_active = True
+
+    while input_active:
+        screen.fill(BLACK)
+        text = font.render("Enter your name:", True, WHITE)
+        screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3))
+
+        # Render the entered name
+        input_text = font.render(name, True, WHITE)
+        screen.blit(input_text, (WIDTH // 2 - input_text.get_width() // 2, HEIGHT // 2))
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    # When Enter is pressed, return the name
+                    return name
+                elif event.key == pygame.K_BACKSPACE:
+                    # Remove last character
+                    name = name[:-1]
+                else:
+                    # Add character to name
+                    name += event.unicode
+
+# Main Menu Function
 def main_menu():
     """Displays the main menu for game mode selection."""
     while True:
@@ -69,6 +107,7 @@ def main_menu():
                 elif event.key == pygame.K_3:
                     return 'player_vs_ai'  # Player vs AI
 
+# Difficulty Menu Function
 def difficulty_menu():
     """Displays the difficulty menu for AI selection."""
     while True:
@@ -103,7 +142,16 @@ def difficulty_menu():
                 elif event.key == pygame.K_4:
                     return ml_agent  # ML Agent (Advanced AI)
 
+# Main Execution Block
 if __name__ == "__main__":
+    # Register the player (if chosen)
+    player_name = register_player()
+
+    # Print player name (if registered)
+    if player_name:
+        print(f"Player registered with name: {player_name}")
+    
+    # Game mode selection
     game_mode = main_menu()  # Get selected game mode
 
     # Set AI agents based on selected mode
@@ -117,5 +165,9 @@ if __name__ == "__main__":
         player1_agent = None  # Human player
         player2_agent = difficulty_menu()  # AI opponent
 
-    # Launch the game
-    game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play_again, main_menu, difficulty_menu)
+
+    player1_name = "Player 1"
+    player2_name = "Player 2" if game_mode == 'human' else "AI"
+    # Launch the game loop
+    game_loop(game_mode, player1_agent, player2_agent, display_message, ask_play_again, main_menu, difficulty_menu, screen, player1_name, player2_name)
+    display_scoreboard()

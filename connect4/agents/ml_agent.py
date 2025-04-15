@@ -7,13 +7,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module='sklearn')
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-
 from connect4.game_utils import COLUMN_COUNT, valid_move, make_move, check_win, block_player_move
-
-
+from connect4.graphics import draw_board
 
 
 # ================================
@@ -94,4 +89,31 @@ def predict_move(board):
 
 # ML agent function to be used by the game
 def ml_agent(board, player):
-    return predict_move(board)
+    try:
+        # Map player to the correct label (e.g., 'O' or 'X')
+        player_label_map = {1: 'O', 2: 'X'}  # Example mapping, adapt as needed
+        player_label = player_label_map[player]
+        
+        # Ensure the label used during prediction exists in the label encoder
+        if player_label not in label_encoder.classes_:
+            # If the label is not in the encoder, we add it manually
+            label_encoder.fit(np.append(label_encoder.classes_, player_label))
+        
+        # Transform the player label for prediction
+        class_index = label_encoder.transform([player_label])[0]
+        
+        prediction = predict_move(board)
+        
+        # Only accept the prediction if it's a valid column (0–6) and the move is allowed
+        if isinstance(prediction, int) and 0 <= prediction < COLUMN_COUNT and valid_move(board, prediction):
+            return prediction
+    except Exception as e:
+        print(f"Error during ML agent move: {e}")
+        pass
+
+    # Fallback: return a random valid column
+    valid_columns = [col for col in range(COLUMN_COUNT) if valid_move(board, col)]
+    if valid_columns:
+        return random.choice(valid_columns)
+    else:
+        return None  # Board full or error — no valid moves
