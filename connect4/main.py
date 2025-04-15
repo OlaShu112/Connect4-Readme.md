@@ -178,3 +178,10 @@ if __name__ == "__main__":
 # https://scikit-learn.org/stable/
 # https://www.youtube.com/watch?v=UYgyRArKDEs&list=PLFCB5Dp81iNV_inzM-R9AKkZZlePCZdtV
 # https://www.askpython.com/python/examples/connect-four-game
+# https://www.youtube.com/watch?v=yzj5TAfPI5Y
+# https://labex.io/tutorials/python-connect-four-game-human-vs-ai-298858
+# https://www.youtube.com/watch?v=cONc0NcKE7s
+# https://www.youtube.com/watch?app=desktop&v=XpYz-q1lxu8&t=0s
+# https://github.com/Buzzpy/Python-Projects/blob/main/Music_player.py
+# https://github.com/hardbyte/python-can/blob/main/can/message.py
+# https://github.com/cansozbir/Connect-4
