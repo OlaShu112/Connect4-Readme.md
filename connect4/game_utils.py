@@ -22,6 +22,7 @@ def drop_piece(board, col, player):
             return row  # Return the row where the piece was placed
     return -1  # If the column is full
 
+
 def valid_move(board, col):
     """Checks if the move is valid in the given column."""
     col = int(float(col))
