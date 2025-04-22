@@ -1,5 +1,6 @@
+
 from connect4.game_utils import COLUMN_COUNT, ROW_COUNT, valid_move, check_win, make_move
-from connect4.agents.random_agent import random_agent
+from connect4.agent_utils.random_agent import random_agent
 
 
 # ================================
